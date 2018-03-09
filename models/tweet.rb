@@ -9,5 +9,6 @@ class Tweet
   field :mentions, type: Array
 
   attr_readonly :user_id, :date_posted, :contents
+  validates :user_id, presence: true
   store_in collection: 'tweets'
 end
