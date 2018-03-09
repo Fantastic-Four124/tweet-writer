@@ -1,0 +1,5 @@
+#Security reasons
+env.sh
+
+#Because there is no need for views for this service. Be sure to uncomment it once you're done testing.
+#views

@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+gem 'sinatra'
+gem 'mongoid'
+gem 'pry-byebug'
+gem 'rack'
+gem 'rake'
+gem 'byebug'
+gem 'rack-test'
+gem 'pg'
+gem 'time_difference'
