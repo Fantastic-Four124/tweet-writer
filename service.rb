@@ -22,4 +22,5 @@ post '/api/v1/tweets/new' do
   #   mentions: params[:mentions]
   # )
   # tweet.save!
+  #redirect '/api/v1/{route}'
 end
