@@ -10,17 +10,21 @@ Mongoid.load! "mongoid.config"
 enable :sessions
 
 set :bind, '0.0.0.0' # Needed to work with Vagrant
+set :port, 8080
 
 # These are still under construction.
 
 post '/api/v1/tweets/new' do
-  # tweet = Tweet.new(
-  #   contents: params[:tweet],
-  #   user_id: session[:user_id],
-  #   date_posted: Time.now,
-  #   hashtags: params[:hashtags],
-  #   mentions: params[:mentions]
-  # )
-  # tweet.save!
-  #redirect '/api/v1/{route}'
+  result = Hash.new
+  tweet = Tweet.new(
+    contents: params[:tweet],
+    user_id: session[:user_id],
+    date_posted: Time.now,
+    hashtags: JSON.parse(params[:hashtags]),
+    mentions: JSON.parse(params[:mentions])
+  )
+  saved = tweet.save
+  byebug
+  result[:saved] = saved
+  result.to_json
 end
