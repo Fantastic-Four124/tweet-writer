@@ -17,6 +17,8 @@ set :port, 8085
 # These are still under construction.
 
 post '/api/v1/tweets/new' do
+  puts ENV["MONGOUSER"]
+  puts ENV["MONGOPASS"]
   result = Hash.new
   tweet = Tweet.new(
     contents: params[:contents],
