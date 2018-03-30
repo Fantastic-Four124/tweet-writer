@@ -6,7 +6,7 @@ require 'json'
 require_relative 'models/tweet'
 
 # DB Setup
-Mongoid.load! "mongoid.config"
+Mongoid.load! "config/mongoid.yml"
 
 #set binding
 enable :sessions

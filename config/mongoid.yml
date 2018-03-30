@@ -1,0 +1,19 @@
+development:
+  clients:
+    default:
+      database: nanotwitter
+      hosts:
+        - ds153015.mlab.com:53015/nanotwitter
+      options:
+        user: <%= ENV["MONGOUSER"] %>
+        password: <%= ENV["MONGOPASS"] %>
+
+production:
+  clients:
+    default:
+      database: nanotwitter
+      hosts:
+        - ds153015.mlab.com:53015/nanotwitter
+      options:
+        user: <%= ENV["MONGOUSER"] %>
+        password: <%= ENV["MONGOPASS"] %>
