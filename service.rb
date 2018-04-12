@@ -4,6 +4,7 @@ require 'mongoid'
 require 'mongoid_search'
 require 'byebug'
 require 'json'
+require 'sinatra/cors'
 require_relative 'models/tweet'
 
 # DB Setup
@@ -14,6 +15,11 @@ enable :sessions
 
 set :bind, '0.0.0.0' # Needed to work with Vagrant
 set :port, 8085
+
+set :allow_origin, '\*'
+set :allow_methods, 'GET,HEAD,POST'
+set :allow_headers, 'accept,content-type,if-modified-since'
+set :expose_headers, 'location,link'
 
 # These are still under construction.
 

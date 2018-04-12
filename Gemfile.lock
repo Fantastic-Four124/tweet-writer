@@ -39,11 +39,13 @@ GEM
     rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rake (12.3.0)
+    redis (4.0.1)
     sinatra (2.0.1)
       mustermann (~> 1.0)
       rack (~> 2.0)
       rack-protection (= 2.0.1)
       tilt (~> 2.0)
+    sinatra-cors (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
     time_difference (0.7.0)
@@ -63,7 +65,9 @@ DEPENDENCIES
   rack
   rack-test
   rake
+  redis
   sinatra
+  sinatra-cors
   time_difference
 
 RUBY VERSION
