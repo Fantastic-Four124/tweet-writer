@@ -23,6 +23,10 @@ set :expose_headers, 'location,link'
 
 # These are still under construction.
 
+get '/loaderio-3790352c0664df3f597575d62a09d082.txt' do
+  send_file 'loaderio-3790352c0664df3f597575d62a09d082.txt'
+end
+
 post '/api/v1/tweets/new' do
   result = Hash.new
   tweet = Tweet.new(
