@@ -43,8 +43,12 @@ post '/api/v1/tweets/new' do
 end
 
 # ONLY TO BE USED FOR TESTING
-# post '/api/v1/tweets/delete' do
-#   success = Tweet.where(_id: params[:id]).delete
-#   byebug
-#   success.to_json
-# end
+delete '/api/v1/tweets/delete' do
+  success = Tweet.delete_all
+  success.to_json
+end
+
+delete '/api/v1/tweets/delete/:user_id' do
+  success = Tweet.delete_all(:user_id => params[:user_id])
+  success.to_json
+end
