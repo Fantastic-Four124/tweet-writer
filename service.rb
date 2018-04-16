@@ -48,7 +48,7 @@ end
 #
 post '/api/v1/:apitoken/tweets/new' do
   if !$user_redis.get(params[:apitoken]).nil?
-    byebug
+    # byebug
     username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
     user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"]
     mentions = nil
