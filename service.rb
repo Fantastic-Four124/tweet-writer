@@ -57,7 +57,7 @@ post '/api/v1/:apitoken/tweets/new' do
     end
     result = Hash.new
     tweet = Tweet.new(
-      contents: params[:contents],
+      contents: params["tweet-input"],
       date_posted: Time.now(),
       user: {username: username,
       id: user_id
