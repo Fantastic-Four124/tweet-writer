@@ -6,6 +6,7 @@ require 'byebug'
 require 'json'
 require 'sinatra/cors'
 require_relative 'models/tweet'
+require 'redis'
 
 # DB Setup
 Mongoid.load! "config/mongoid.yml"
@@ -21,25 +22,65 @@ set :allow_methods, 'GET,HEAD,POST'
 set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
 
+configure do
+  reader_uri = URI.parse(ENV["READER_REDIS_URL"])
+  user_uri = URI.parse(ENV['USER_REDIS_URL'])
+  follow_uri = URI.parse(ENV['FOLLOW_REDIS_URL'])
+  $reader_redis = Redis.new(:host => reader_uri.host, :port => reader_uri.port, :password => reader_uri.password)
+  $follow_redis = Redis.new(:host => follow_uri.host, :port => follow_uri.port, :password => follow_uri.password)
+  $user_redis = Redis.new(:host => user_uri.host, :port => user_uri.port, :password => user_uri.password)
+end
+
+helpers do
+  def cache(redis_key, json_tweet)
+    $reader_redis.lpush(redis_key, json_tweet)
+    if $reader_redis.llen(redis_key) > 50
+      $reader_redis.rpop(redis_key)
+    end
+  end
+end
+
 # These are still under construction.
 
 get '/loaderio-3790352c0664df3f597575d62a09d082.txt' do
   send_file 'loaderio-3790352c0664df3f597575d62a09d082.txt'
 end
 
-post '/api/v1/tweets/new' do
-  result = Hash.new
-  tweet = Tweet.new(
-    contents: params[:contents],
-    username: params[:username],
-    user_id: params[:user_id],
-    date_posted: Time.now,
-    hashtags: JSON.parse(params[:hashtags]),
-    mentions: JSON.parse(params[:mentions])
-  )
-  saved = tweet.save
-  result[:saved] = saved
-  result.to_json
+post '/api/v1/:apitoken/tweets/new' do
+  if !$user_redis.get(params[:apitoken]).nil?
+    byebug
+    username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
+    user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"]
+    mentions = nil
+    if !params[:mentions].nil?
+      mentions = JSON.parse(params[:mentions])
+    end
+    result = Hash.new
+    tweet = Tweet.new(
+      contents: params[:contents],
+      date_posted: Time.now(),
+      user: {username: username,
+      id: user_id
+    },
+      mentions: mentions
+    )
+    # puts tweet.to_json
+    cache("recent", tweet.to_json)
+    cache(user_id.to_s + "_feed", tweet.to_json)
+    if !$follow_redis.get("#{user_id.to_s} followers").nil?
+      JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
+        cache(follower, tweet.to_json)
+      end
+    end
+    # send ok message?
+    # have rabbitMQ save the Tweet
+    # byebug
+    saved = tweet.save
+    # puts tweet.to_json
+    result[:saved] = saved
+    return result.to_json
+  end
+  {err: true}.to_json
 end
 
 # ONLY TO BE USED FOR TESTING
