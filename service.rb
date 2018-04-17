@@ -83,6 +83,40 @@ post '/api/v1/:apitoken/tweets/new' do
   {err: true}.to_json
 end
 
+# For test interface only
+post '/testing/tweets/new' do
+  username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
+  user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"]
+  mentions = nil
+  if !params[:mentions].nil?
+    mentions = JSON.parse(params[:mentions])
+  end
+  result = Hash.new
+  tweet = Tweet.new(
+    contents: params["tweet-input"],
+    date_posted: Time.now(),
+    user: {username: username,
+    id: user_id
+  },
+    mentions: mentions
+  )
+  # puts tweet.to_json
+  cache("recent", tweet.to_json)
+  cache(user_id.to_s + "_feed", tweet.to_json)
+  if !$follow_redis.get("#{user_id.to_s} followers").nil?
+    JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
+      cache(follower, tweet.to_json)
+    end
+  end
+  # send ok message?
+  # have rabbitMQ save the Tweet
+  # byebug
+  saved = tweet.save
+  # puts tweet.to_json
+  result[:saved] = saved
+  return result.to_json
+end
+
 # ONLY TO BE USED FOR TESTING
 delete '/api/v1/tweets/delete' do
   success = Tweet.delete_all
