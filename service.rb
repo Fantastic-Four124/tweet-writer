@@ -23,19 +23,19 @@ set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
 
 configure do
-  reader_uri = URI.parse(ENV["READER_REDIS_URL"])
+  tweet_uri = URI.parse(ENV["TWEET_REDIS_URL"])
   user_uri = URI.parse(ENV['USER_REDIS_URL'])
   follow_uri = URI.parse(ENV['FOLLOW_REDIS_URL'])
-  $reader_redis = Redis.new(:host => reader_uri.host, :port => reader_uri.port, :password => reader_uri.password)
+  $tweet_redis = Redis.new(:host => tweet_uri.host, :port => tweet_uri.port, :password => tweet_uri.password)
   $follow_redis = Redis.new(:host => follow_uri.host, :port => follow_uri.port, :password => follow_uri.password)
   $user_redis = Redis.new(:host => user_uri.host, :port => user_uri.port, :password => user_uri.password)
 end
 
 helpers do
   def cache(redis_key, json_tweet)
-    $reader_redis.lpush(redis_key, json_tweet)
-    if $reader_redis.llen(redis_key) > 50
-      $reader_redis.rpop(redis_key)
+    $tweet_redis.lpush(redis_key, json_tweet)
+    if $tweet_redis.llen(redis_key) > 50
+      $tweet_redis.rpop(redis_key)
     end
   end
 end
