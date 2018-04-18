@@ -23,7 +23,7 @@ class WriterClient
     @exchange = channel.default_exchange
     @server_queue_name = server_queue_name
 
-    setup_reply_queue
+    #setup_reply_queue
   end
 
   def call(n)
@@ -35,9 +35,10 @@ class WriterClient
                      reply_to: reply_queue.name)
 
     # wait for the signal to continue the execution
-    lock.synchronize { condition.wait(lock) }
+    #lock.synchronize { condition.wait(lock) }
 
-    response
+    #response
+    'ok'
   end
 
   def stop

@@ -41,13 +41,13 @@ class WriterServer
     queue.subscribe(block: true) do |_delivery_info, properties, payload|
       puts "[x] Get message #{payload}. Gonna do some user service about #{payload}"
       process(payload)
-      result = 'ok'
+      #result = 'ok'
       #byebug
-      exchange.publish(
-        result,
-        routing_key: properties.reply_to,
-        correlation_id: properties.correlation_id
-      )
+      # exchange.publish(
+      #   result,
+      #   routing_key: properties.reply_to,
+      #   correlation_id: properties.correlation_id
+      # )
     end
   end
 
