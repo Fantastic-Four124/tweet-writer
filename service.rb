@@ -84,9 +84,9 @@ post '/api/v1/:apitoken/tweets/new' do
 end
 
 # For test interface only
-post '/testing/tweets/new' do
-  username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
-  user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"]
+post '/testing/tweets/new/:username/:id' do
+  username = params["username"]
+  user_id = params["id"]
   mentions = nil
   if !params[:mentions].nil?
     mentions = JSON.parse(params[:mentions])
