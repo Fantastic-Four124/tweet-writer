@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 require 'bunny'
 require 'thread'
+require 'mongoid'
+require 'mongoid_search'
 require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
-require_relative 'test_interface.rb'
+#require_relative 'test_interface.rb'
 require 'time_difference'
 require 'time'
 require 'json'
@@ -53,12 +55,12 @@ class WriterServer
   def process(original)
     hydrate_original = JSON.parse(original)
     tweet = Tweet.new(
-      contents: params["tweet-input"],
-      date_posted: Time.now(),
-      user: {username: username,
-      id: user_id
+      contents: hydrate_original["contents"],
+      date_posted: hydrate_original["date_posted"],
+      user: {username: hydrate_original["user"]["username"],
+      id: hydrate_original["user"]["user_id"]
     },
-      mentions: mentions
+      mentions: hydrate_original["mentions"]
     )
     tweet.save
   end
