@@ -31,8 +31,8 @@ class WriterClient
 
     exchange.publish(n,
                      routing_key: server_queue_name,
-                     correlation_id: call_id,
-                     reply_to: reply_queue.name)
+                     correlation_id: call_id)
+                     #reply_to: reply_queue.name)
 
     # wait for the signal to continue the execution
     #lock.synchronize { condition.wait(lock) }
