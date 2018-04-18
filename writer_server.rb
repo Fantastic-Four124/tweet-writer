@@ -39,7 +39,7 @@ class WriterServer
 
   def subscribe_to_queue
     queue.subscribe(block: true) do |_delivery_info, properties, payload|
-      puts "[x] Get message #{payload}. Gonna do some user service about #{payload}"
+      #puts "[x] Get message #{payload}. Gonna do some user service about #{payload}"
       process(payload)
       #result = 'ok'
       #byebug
@@ -70,7 +70,7 @@ end
 begin
   server = WriterServer.new(ENV["RABBITMQ_BIGWIG_RX_URL"])
 
-  puts ' [x] Awaiting RPC requests'
+  #puts ' [x] Awaiting RPC requests'
   server.start('writer_queue')
   #server.start2('rpc_queue_hello')
 rescue Interrupt => _
