@@ -2,7 +2,6 @@
 require 'bunny'
 require 'thread'
 require 'sinatra'
-require 'sinatra/activerecord'
 require 'byebug'
 #require_relative 'test_interface.rb'
 require 'time_difference'
