@@ -29,7 +29,7 @@ class WriterClient
   def call(n)
     @call_id = generate_uuid
 
-    exchange.publish(n.to_s,
+    exchange.publish(n,
                      routing_key: server_queue_name,
                      correlation_id: call_id,
                      reply_to: reply_queue.name)
