@@ -40,8 +40,8 @@ class WriterServer
   def subscribe_to_queue
     queue.subscribe(block: true) do |_delivery_info, properties, payload|
       puts "[x] Get message #{payload}. Gonna do some user service about #{payload}"
-      result = process(payload)
-      puts result
+      process(payload)
+      result = 'ok'
       #byebug
       exchange.publish(
         result,
