@@ -26,6 +26,8 @@ configure do
   tweet_uri = URI.parse(ENV["TWEET_REDIS_URL"])
   user_uri = URI.parse(ENV['USER_REDIS_URL'])
   follow_uri = URI.parse(ENV['FOLLOW_REDIS_URL'])
+  tweet_uri_spare = URI.parse(ENV['TWEET_REDIS_SPARE_URL'])
+  $tweet_redis_spare = Redis.new(:host => tweet_uri_spare.host, :port => tweet_uri_spare.port, :password => tweet_uri_spare.password)
   $tweet_redis = Redis.new(:host => tweet_uri.host, :port => tweet_uri.port, :password => tweet_uri.password)
   $follow_redis = Redis.new(:host => follow_uri.host, :port => follow_uri.port, :password => follow_uri.password)
   $user_redis = Redis.new(:host => user_uri.host, :port => user_uri.port, :password => user_uri.password)
@@ -38,12 +40,19 @@ helpers do
       $tweet_redis.rpop(redis_key)
     end
   end
+
+  def cache_spare(redis_key, json_tweet)
+    $tweet_redis_spare.lpush(redis_key, json_tweet)
+    if $tweet_redis_spare.llen(redis_key) > 50
+      $tweet_redis_spare.rpop(redis_key)
+    end
+  end
 end
 
 # These are still under construction.
 
-get '/loaderio-16864484b2fbdbe95495f6268aad2f2b.txt' do
-  send_file 'loaderio-16864484b2fbdbe95495f6268aad2f2b.txt'
+get '/loaderio-3790352c0664df3f597575d62a09d082.txt' do
+  send_file 'loaderio-3790352c0664df3f597575d62a09d082.txt'
 end
 #
 post '/api/v1/:apitoken/tweets/new' do
@@ -66,6 +75,7 @@ post '/api/v1/:apitoken/tweets/new' do
     )
     # puts tweet.to_json
     cache("recent", tweet.to_json)
+    cache_spare("recent", tweet.to_json)
     cache(user_id.to_s + "_feed", tweet.to_json)
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
