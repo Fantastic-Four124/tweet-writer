@@ -54,6 +54,10 @@ end
 get '/loaderio-3790352c0664df3f597575d62a09d082.txt' do
   send_file 'loaderio-3790352c0664df3f597575d62a09d082.txt'
 end
+
+get '/loaderio-5e6733da8faf19acc30234ffdc8ed34d.txt' do
+  send_file 'loaderio-5e6733da8faf19acc30234ffdc8ed34d.txt'
+end
 #
 post '/api/v1/:apitoken/tweets/new' do
   if !$user_redis.get(params[:apitoken]).nil?
@@ -86,6 +90,7 @@ post '/api/v1/:apitoken/tweets/new' do
     # send ok message?
     # have rabbitMQ save the Tweet
     # byebug
+    #CLIENT.call({contents: params["tweet-input"] , date_posted: tweet[], "isFo": isFo}.to_json)
     saved = tweet.save
     # puts tweet.to_json
     result[:saved] = saved
