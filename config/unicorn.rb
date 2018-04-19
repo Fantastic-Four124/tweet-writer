@@ -1,5 +1,5 @@
-worker_processes Integer(ENV['UNICORN_WORKERS'] || 4)
-timeout 10
+worker_processes Integer(ENV['UNICORN_WORKERS'] || 16)
+timeout 120
 preload_app true
 
 
