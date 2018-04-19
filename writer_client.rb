@@ -10,6 +10,7 @@ require 'json'
 #require 'rest-client'
 require 'redis'
 require_relative 'models/tweet'
+#require 'connection_pool'
 
 class WriterClient
   attr_accessor :call_id, :response, :lock, :condition, :connection,
@@ -40,6 +41,12 @@ class WriterClient
     #response
     'ok'
   end
+
+  # def channel
+  #   @channel_pool ||= ConnectionPool.new do
+  #     connection.create_channel
+  #   end
+  # end
 
   def stop
     channel.close
