@@ -27,10 +27,10 @@ class WriterClient
     #setup_reply_queue
   end
 
-  def call(n)
+  def call(tweet)
     @call_id = generate_uuid
 
-    exchange.publish('a',
+    exchange.publish(tweet,
                      routing_key: server_queue_name,
                      correlation_id: call_id)
                      #reply_to: reply_queue.name)
