@@ -93,7 +93,7 @@ post '/api/v1/:apitoken/tweets/new' do
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
         cache(follower, tweet.to_json)
-      end]
+      end
     end
     # send ok message?
     # have rabbitMQ save the Tweet

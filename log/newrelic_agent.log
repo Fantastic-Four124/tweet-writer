@@ -1,0 +1,17 @@
+# Logfile created on 2018-04-19 13:25:10 -0400 by logger.rb/61378
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Starting the New Relic agent version 5.0.0.342 in "development" environment.
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : To prevent agent startup add a NEW_RELIC_AGENT_ENABLED=false environment variable or modify the "development" section of your newrelic.yml.
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Reading configuration from config/newrelic.yml (/Users/zhengyangzhou/Desktop/Spring 2018/tweet-writer)
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Environment: development
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : No known dispatcher detected.
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Application: My Application (Development)
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing Bunny instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing Mongo instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing Net instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing Sinatra instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing deferred Rack::Builder instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing Rack::Builder middleware instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Installing Redis Instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Finished instrumentation
+[2018-04-19 13:25:10 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Doing deferred dependency-detection before Rack startup
+[2018-04-19 13:25:13 -0400 Zhengyangs-MacBook-Pro-2.local (26757)] INFO : Reporting to: https://rpm.newrelic.com/accounts/1949244/applications/50519398
