@@ -39,7 +39,7 @@ class WriterClient
     #lock.synchronize { condition.wait(lock) }
 
     #response
-    'ok'
+    #'ok'
   end
 
   # def channel
