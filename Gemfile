@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.5.0"
+ruby "2.5.1"
 
 gem 'sinatra'
 gem 'mongoid'
@@ -13,7 +13,7 @@ gem 'time_difference'
 gem 'mongoid_search'
 gem 'sinatra-cors'
 gem 'redis'
-gem 'puma'
+gem 'unicorn'
 gem 'bunny'
 gem 'connection_pool'
 gem 'newrelic_rpm'

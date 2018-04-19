@@ -78,7 +78,7 @@ post '/api/v1/:apitoken/tweets/new' do
     result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
-      date_posted: Time.now(),
+      date_posted: Time.now,
       user: {username: username,
       id: user_id
     },
@@ -98,8 +98,8 @@ post '/api/v1/:apitoken/tweets/new' do
     # have rabbitMQ save the Tweet
     # byebug
     #thr = Thread.new{ writer_client.call(tweet.to_json) }
-    #writer_client.call(tweet.to_json)
-    saved = tweet.save
+    $writer_client.call(tweet.to_json)
+    #saved = tweet.save
     # puts tweet.to_json
     return {err: false}.to_json
   end
