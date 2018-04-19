@@ -30,6 +30,7 @@ GEM
       fast-stemmer (~> 1.0.0)
       mongoid (>= 3.0.0)
     mustermann (1.0.2)
+    newrelic_rpm (5.0.0.342)
     pg (1.0.0)
     pry (0.11.3)
       coderay (~> 1.1.0)
@@ -67,6 +68,7 @@ DEPENDENCIES
   connection_pool
   mongoid
   mongoid_search
+  newrelic_rpm
   pg
   pry-byebug
   puma
