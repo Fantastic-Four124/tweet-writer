@@ -7,7 +7,6 @@ require 'json'
 require 'sinatra/cors'
 require_relative 'models/tweet'
 require 'redis'
-require_relative 'writer_client.rb'
 require 'newrelic_rpm'
 
 #writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
@@ -76,7 +75,7 @@ post '/api/v1/:apitoken/tweets/new' do
     if !params[:mentions].nil?
       mentions = JSON.parse(params[:mentions])
     end
-    result = Hash.new
+    #result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
       date_posted: Time.now,
@@ -85,16 +84,19 @@ post '/api/v1/:apitoken/tweets/new' do
     },
       mentions: mentions
     )
+    # Redis block
     # puts tweet.to_json
-    cache("recent", tweet.to_json)
-    cache_spare("recent", tweet.to_json)
-    cache(user_id.to_s + "_feed", tweet.to_json)
-    cache_spare(user_id.to_s + "_feed", tweet.to_json)
-    if !$follow_redis.get("#{user_id.to_s} followers").nil?
-      JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-        cache(follower, tweet.to_json)
-      end
-    end
+    # cache("recent", tweet.to_json)
+    # cache_spare("recent", tweet.to_json)
+    # cache(user_id.to_s + "_feed", tweet.to_json)
+    # cache_spare(user_id.to_s + "_feed", tweet.to_json)
+    # if !$follow_redis.get("#{user_id.to_s} followers").nil?
+    #   JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
+    #     cache(follower, tweet.to_json)
+    #   end
+    # end
+
+
     # send ok message?
     # have rabbitMQ save the Tweet
     # byebug

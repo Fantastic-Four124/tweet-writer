@@ -4,6 +4,7 @@ preload_app true
 
 
 after_fork do |server, worker|
+  require_relative '../writer_client.rb'
   $writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
 end
 
