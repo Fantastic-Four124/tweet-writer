@@ -17,6 +17,7 @@ class WriterClient
                 :channel, :server_queue_name, :reply_queue, :exchange
 
   def initialize(server_queue_name,id)
+    puts "Creating bunny"
     @connection = Bunny.new(id,automatically_recover: false)
     @connection.start
 
