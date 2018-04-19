@@ -18,7 +18,7 @@ class WriterClient
 
   def initialize(server_queue_name,id)
     puts "Creating bunny"
-    @connection = Bunny.new(id,automatically_recover: false)
+    @connection = Bunny.new(id,automatically_recover: false, read_timeout: 60)
     @connection.start
 
     @channel = connection.create_channel
