@@ -8,6 +8,7 @@ require 'sinatra/cors'
 require_relative 'models/tweet'
 require 'redis'
 require_relative 'writer_client.rb'
+require 'newrelic_rpm'
 
 #writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
 
