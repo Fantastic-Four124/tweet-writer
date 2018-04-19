@@ -99,7 +99,7 @@ post '/api/v1/:apitoken/tweets/new' do
     # byebug
     #thr = Thread.new{ writer_client.call(tweet.to_json) }
     $writer_client.call(tweet.to_json)
-    saved = tweet.save
+    #saved = tweet.save
     # puts tweet.to_json
     return {err: false}.to_json
   end
