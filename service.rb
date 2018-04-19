@@ -11,9 +11,9 @@ require_relative 'writer_client.rb'
 
 writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
 
-Thread.new do
-  require_relative 'writer_server.rb'
-end
+# Thread.new do
+#   require_relative 'writer_server.rb'
+# end
 
 # DB Setup
 Mongoid.load! "config/mongoid.yml"
@@ -97,7 +97,8 @@ post '/api/v1/:apitoken/tweets/new' do
     # send ok message?
     # have rabbitMQ save the Tweet
     # byebug
-    thr = Thread.new{ writer_client.call(tweet.to_json) }
+    #thr = Thread.new{ writer_client.call(tweet.to_json) }
+    writer_client.call(tweet.to_json)
     #saved = tweet.save
     # puts tweet.to_json
     #result[:saved] = saved
