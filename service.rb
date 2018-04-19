@@ -9,7 +9,7 @@ require_relative 'models/tweet'
 require 'redis'
 require_relative 'writer_client.rb'
 
-writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
+#writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
 
 # Thread.new do
 #   require_relative 'writer_server.rb'
@@ -98,10 +98,9 @@ post '/api/v1/:apitoken/tweets/new' do
     # have rabbitMQ save the Tweet
     # byebug
     #thr = Thread.new{ writer_client.call(tweet.to_json) }
-    writer_client.call(tweet.to_json)
-    #saved = tweet.save
+    #writer_client.call(tweet.to_json)
+    saved = tweet.save
     # puts tweet.to_json
-    #result[:saved] = saved
     return {err: false}.to_json
   end
   {err: true}.to_json
