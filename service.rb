@@ -10,7 +10,7 @@ require 'redis'
 require 'rest-client'
 require_relative 'writer_client.rb'
 
-writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
+#writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
 
 # Thread.new do
 #   require_relative 'writer_server.rb'
@@ -103,7 +103,6 @@ post '/api/v1/:apitoken/tweets/new' do
     writer_client.call(tweet.to_json)
     #saved = tweet.save
     # puts tweet.to_json
-    #result[:saved] = saved
     return {err: false}.to_json
   end
   {err: true}.to_json
