@@ -7,6 +7,7 @@ require 'json'
 require 'sinatra/cors'
 require_relative 'models/tweet'
 require 'redis'
+require 'rest-client'
 require_relative 'writer_client.rb'
 
 writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
@@ -41,17 +42,10 @@ configure do
 end
 
 helpers do
-  def cache(redis_key, json_tweet)
-    $tweet_redis.lpush(redis_key, json_tweet)
-    if $tweet_redis.llen(redis_key) > 50
-      $tweet_redis.rpop(redis_key)
-    end
-  end
-
-  def cache_spare(redis_key, json_tweet)
-    $tweet_redis_spare.lpush(redis_key, json_tweet)
-    if $tweet_redis_spare.llen(redis_key) > 50
-      $tweet_redis_spare.rpop(redis_key)
+  def cache(redis, redis_key, json_tweet)
+    redis.lpush(redis_key, json_tweet)
+    if redis.llen(redis_key) > 50
+      redis.rpop(redis_key)
     end
   end
 end
@@ -71,10 +65,20 @@ post '/api/v1/:apitoken/tweets/new' do
     # byebug
     username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
     user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"]
-    mentions = nil
-    if !params[:mentions].nil?
-      mentions = JSON.parse(params[:mentions])
+    mentions = []
+    uncertain = []
+    content = msg.split # Tokenizes the message
+    content.each do |token|
+      if /([@.])\w+/.match(token)
+        term = token[1..-1]
+        if !$user_redis.get(term).nil?
+          mentions << $(term)
+        else
+          uncertain << term
+        end
+      end
     end
+    mentions = mentions + (JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com//api/v1/users/exists', {usernames: uncertain.to_json})).pluck(:username)
     result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
@@ -85,19 +89,17 @@ post '/api/v1/:apitoken/tweets/new' do
       mentions: mentions
     )
     # puts tweet.to_json
-    cache("recent", tweet.to_json)
-    cache_spare("recent", tweet.to_json)
-    cache(user_id.to_s + "_feed", tweet.to_json)
-    cache_spare(user_id.to_s + "_feed", tweet.to_json)
+    cache($tweet_redis, "recent", tweet.to_json)
+    cache($tweet_redis_spare, "recent", tweet.to_json)
+    cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
+    cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-        cache(follower, tweet.to_json)
+        cache($tweet_redis, "#{follower}_feed", tweet.to_json)
+        cache($tweet_redis_spare, "#{follower}_feed", tweet.to_json)
       end
     end
-    # send ok message?
-    # have rabbitMQ save the Tweet
-    # byebug
-    #thr = Thread.new{ writer_client.call(tweet.to_json) }
+  #thr = Thread.new{ writer_client.call(tweet.to_json) }
     writer_client.call(tweet.to_json)
     #saved = tweet.save
     # puts tweet.to_json
@@ -109,11 +111,15 @@ end
 
 # ONLY TO BE USED FOR TESTING
 delete '/api/v1/tweets/delete' do
+  $tweet_redis.flushall
+  $tweet_redis_spare.flushall
   success = Tweet.delete_all
   success.to_json
 end
 
 delete '/api/v1/tweets/delete/:user_id' do
   success = Tweet.delete_all(:user_id => params[:user_id])
+  $tweet_redis.delete(params[:user_id] + "_feed")
+  $tweet_redis_spare.delete(params[:user_id] + "_feed")
   success.to_json
 end
