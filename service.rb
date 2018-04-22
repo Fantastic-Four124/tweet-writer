@@ -86,15 +86,15 @@ post '/api/v1/:apitoken/tweets/new' do
     )
     # Redis block
     # puts tweet.to_json
-    # cache("recent", tweet.to_json)
-    # cache_spare("recent", tweet.to_json)
-    # cache(user_id.to_s + "_feed", tweet.to_json)
-    # cache_spare(user_id.to_s + "_feed", tweet.to_json)
-    # if !$follow_redis.get("#{user_id.to_s} followers").nil?
-    #   JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-    #     cache(follower, tweet.to_json)
-    #   end
-    # end
+    cache("recent", tweet.to_json)
+    cache_spare("recent", tweet.to_json)
+    cache(user_id.to_s + "_feed", tweet.to_json)
+    cache_spare(user_id.to_s + "_feed", tweet.to_json)
+    if !$follow_redis.get("#{user_id.to_s} followers").nil?
+      JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
+        cache(follower, tweet.to_json)
+      end
+    end
 
 
     # send ok message?
