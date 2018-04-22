@@ -40,7 +40,7 @@ class WriterTest < Minitest::Test
 
   def unauthorized_tweet_write
     post '/api/v1/:not_a_token/tweets/new', {"tweet-input" => "I am a test tweet"}, "CONTENT_TYPE" => "multipart/form-data"
-    assert last_response.body.include?({err: true}.to_json)
+    assert last_response.body.include?(JSON.parse({err: true}.to_json))
   end
 
   def tweet_write_queue_success
@@ -63,8 +63,8 @@ class WriterTest < Minitest::Test
     assert JSON.parse($tweet_redis_spare.lpop("recent"))["contents"] == "I am a test tweet"
     assert JSON.parse($tweet_redis.lpop("175_feed"))["contents"] == "I am a test tweet"
     assert JSON.parse($tweet_redis_spare.lpop("175_feed"))["contents"] == "I am a test tweet"
-    assert JSON.parse($tweet_redis.lpop("180_feed"))["contents"] == "I am a test tweet"
-    assert JSON.parse($tweet_redis_spare.lpop("180_feed"))["contents"] == "I am a test tweet"
+    assert JSON.parse($tweet_redis.lpop("180_timeline"))["contents"] == "I am a test tweet"
+    assert JSON.parse($tweet_redis_spare.lpop("180_timeline"))["contents"] == "I am a test tweet"
     flush_all
   end
 

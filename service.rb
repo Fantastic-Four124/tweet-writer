@@ -64,7 +64,7 @@ post '/api/v1/:apitoken/tweets/new' do
   if !$user_redis.get(params[:apitoken]).nil?
     # byebug
     username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
-    user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"]
+    user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"].to_i
     mentions = []
     uncertain = []
     content = msg.split # Tokenizes the message
@@ -72,13 +72,13 @@ post '/api/v1/:apitoken/tweets/new' do
       if /([@.])\w+/.match(token)
         term = token[1..-1]
         if !$user_redis.get(term).nil?
-          mentions << $(term)
+          mentions << {term => $user_redis.get(term)}
         else
           uncertain << term
         end
       end
     end
-    mentions = mentions + (JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com//api/v1/users/exists', {usernames: uncertain.to_json})).pluck(:username)
+    mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com//api/v1/users/exists', {usernames: uncertain.to_json})
     result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
@@ -95,8 +95,8 @@ post '/api/v1/:apitoken/tweets/new' do
     cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-        cache($tweet_redis, "#{follower}_feed", tweet.to_json)
-        cache($tweet_redis_spare, "#{follower}_feed", tweet.to_json)
+        cache($tweet_redis, "#{follower}_timeline", tweet.to_json)
+        cache($tweet_redis_spare, "#{follower}_timeline", tweet.to_json)
       end
     end
   #thr = Thread.new{ writer_client.call(tweet.to_json) }
