@@ -80,7 +80,7 @@ post '/api/v1/:apitoken/tweets/new' do
         end
       end
     end
-    mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com//api/v1/users/exists', {usernames: uncertain.to_json})
+    mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com/api/v1/users/exists', {usernames: uncertain.to_json})
     result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
