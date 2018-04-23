@@ -98,8 +98,8 @@ post '/api/v1/:apitoken/tweets/new' do
     cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-        cache(follower.to_s + "_timeline", tweet.to_json)
-        cache_spare(follower.to_s + "_timeline", tweet.to_json)
+        cache($tweet_redis,follower.to_s + "_timeline", tweet.to_json)
+        cache($tweet_redis_spare,follower.to_s + "_timeline", tweet.to_json)
       end
     end
 
