@@ -17,6 +17,7 @@ require 'newrelic_rpm'
 #   require_relative 'writer_server.rb'
 # end
 
+
 # DB Setup
 Mongoid.load! "config/mongoid.yml"
 
