@@ -98,8 +98,7 @@ post '/api/v1/:apitoken/tweets/new' do
     end
 
 
-    # send ok message?
-    # have rabbitMQ save the Tweet
+    
     # byebug
     #thr = Thread.new{ writer_client.call(tweet.to_json) }
     $writer_client.call(tweet.to_json)
