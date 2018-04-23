@@ -68,19 +68,19 @@ post '/api/v1/:apitoken/tweets/new' do
     username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
     user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"].to_i
     mentions = []
-    uncertain = []
-    content = params["tweet-input"].split # Tokenizes the message
-    content.each do |token|
-      if /([@.])\w+/.match(token)
-        term = token[1..-1]
-        if !$user_redis.get(term).nil?
-          mentions << {term => $user_redis.get(term)}
-        else
-          uncertain << term
-        end
-      end
-    end
-    mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com/api/v1/users/exists', {usernames: uncertain.to_json})
+    # uncertain = []
+    # content = params["tweet-input"].split # Tokenizes the message
+    # content.each do |token|
+    #   if /([@.])\w+/.match(token)
+    #     term = token[1..-1]
+    #     if !$user_redis.get(term).nil?
+    #       mentions << {term => $user_redis.get(term)}
+    #     else
+    #       uncertain << term
+    #     end
+    #   end
+    # end
+    # mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com/api/v1/users/exists', {usernames: uncertain.to_json})
     result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
