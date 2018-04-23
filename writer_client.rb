@@ -17,7 +17,8 @@ class WriterClient
                 :channel, :server_queue_name, :reply_queue, :exchange
 
   def initialize(server_queue_name,id)
-    @connection = Bunny.new(id,automatically_recover: false)
+    puts "Creating bunny"
+    @connection = Bunny.new(id,automatically_recover: false, read_timeout: 60)
     @connection.start
 
     @channel = connection.create_channel
@@ -27,10 +28,10 @@ class WriterClient
     #setup_reply_queue
   end
 
-  def call(n)
+  def call(tweet)
     @call_id = generate_uuid
 
-    exchange.publish('a',
+    exchange.publish(tweet,
                      routing_key: server_queue_name,
                      correlation_id: call_id)
                      #reply_to: reply_queue.name)
