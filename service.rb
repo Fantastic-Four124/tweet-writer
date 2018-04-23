@@ -121,7 +121,7 @@ delete '/api/v1/tweets/delete' do
   success.to_json
 end
 
-post '/api/v1/testing/tweets/new' do
+post '/testing/tweets/new' do
   puts params
   username = params[:username]
   user_id = params[:id]
