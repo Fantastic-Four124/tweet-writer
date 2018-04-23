@@ -164,8 +164,6 @@ post '/api/v1/testing/tweets/new' do
   # puts tweet.to_json
   return {err: false}.to_json
 end
-{err: true}.to_json
-end
 
 delete '/api/v1/tweets/delete/:user_id' do
   success = Tweet.delete_all(:user_id => params[:user_id])
