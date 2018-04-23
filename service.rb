@@ -67,7 +67,7 @@ post '/api/v1/:apitoken/tweets/new' do
     user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"].to_i
     mentions = []
     uncertain = []
-    content = msg.split # Tokenizes the message
+    content = params["tweet-input"].split # Tokenizes the message
     content.each do |token|
       if /([@.])\w+/.match(token)
         term = token[1..-1]
@@ -114,6 +114,52 @@ delete '/api/v1/tweets/delete' do
   $tweet_redis_spare.flushall
   success = Tweet.delete_all
   success.to_json
+end
+
+post '/api/v1/testing/tweets/new' do
+  username = params[:username]
+  user_id = params[:id]
+  mentions = []
+  # uncertain = []
+  # content = msg.split # Tokenizes the message
+  # content.each do |token|
+  #   if /([@.])\w+/.match(token)
+  #     term = token[1..-1]
+  #     if !$user_redis.get(term).nil?
+  #       mentions << {term => $user_redis.get(term)}
+  #     else
+  #       uncertain << term
+  #     end
+  #   end
+  # end
+  # mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com//api/v1/users/exists', {usernames: uncertain.to_json})
+  result = Hash.new
+  tweet = Tweet.new(
+    contents: params["tweet-input"],
+    date_posted: Time.now,
+    user: {username: username,
+    id: user_id
+  },
+    mentions: mentions
+  )
+  # puts tweet.to_json
+  cache($tweet_redis, "recent", tweet.to_json)
+  cache($tweet_redis_spare, "recent", tweet.to_json)
+  cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
+  cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
+  if !$follow_redis.get("#{user_id.to_s} followers").nil?
+    JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
+      cache($tweet_redis, "#{follower}_timeline", tweet.to_json)
+      cache($tweet_redis_spare, "#{follower}_timeline", tweet.to_json)
+    end
+  end
+#thr = Thread.new{ writer_client.call(tweet.to_json) }
+  writer_client.call(tweet.to_json)
+  #saved = tweet.save
+  # puts tweet.to_json
+  return {err: false}.to_json
+end
+{err: true}.to_json
 end
 
 delete '/api/v1/tweets/delete/:user_id' do
