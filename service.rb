@@ -122,6 +122,7 @@ delete '/api/v1/tweets/delete' do
 end
 
 post '/api/v1/testing/tweets/new' do
+  puts params
   username = params[:username]
   user_id = params[:id]
   mentions = []
