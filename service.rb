@@ -201,5 +201,3 @@ post '/api/v1/tweets/bulkinsert' do
   end
   Tweet.collection.insert_many(batch)
 end
-
-end
