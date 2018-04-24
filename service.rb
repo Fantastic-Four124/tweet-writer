@@ -171,6 +171,7 @@ delete '/api/v1/tweets/delete/:user_id' do
   $tweet_redis.delete(params[:user_id] + "_feed")
   $tweet_redis_spare.delete(params[:user_id] + "_feed")
   success.to_json
+end
 
 post '/api/v1/tweets/bulkinsert' do
   batch = []
