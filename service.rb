@@ -64,11 +64,16 @@ get '/loaderio-5e6733da8faf19acc30234ffdc8ed34d.txt' do
 end
 #
 post '/api/v1/:apitoken/tweets/new' do
-  if !$user_redis.get(params[:apitoken]).nil?
+  puts params
+  session = $user_redis.get(params[:apitoken])
+  if !session.nil?
     # byebug
-    username = JSON.parse($user_redis.get(params[:apitoken]))["username"]
-    user_id = JSON.parse($user_redis.get(params[:apitoken]))["id"].to_i
-    mentions = []
+    puts params
+    username = JSON.parse(session)["username"]
+    user_id = JSON.parse(session)["id"].to_i
+    mentions = JSON.parse(params[:mentions])
+    mentions = validate(mentions) if !mentions.empty?
+    #mentions = []
     # uncertain = []
     # content = params["tweet-input"].split # Tokenizes the message
     # content.each do |token|
@@ -126,8 +131,6 @@ post '/testing/tweets/new' do
   puts params
   username = params[:username]
   user_id = params[:id]
-  mentions = JSON.parse(params[:mentions])
-  processed_mentions = validate(mentions) if !mentions.empty?
   # uncertain = []
   # content = msg.split # Tokenizes the message
   # content.each do |token|
