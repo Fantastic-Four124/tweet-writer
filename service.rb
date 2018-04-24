@@ -20,6 +20,7 @@ require 'newrelic_rpm'
 
 # DB Setup
 Mongoid.load! "config/mongoid.yml"
+$user_exists = 'https://nanotwitter-userservice.herokuapp.com/api/v1/users/exists'
 
 
 enable :sessions
@@ -125,7 +126,8 @@ post '/testing/tweets/new' do
   puts params
   username = params[:username]
   user_id = params[:id]
-  mentions = []
+  mentions = JSON.parse(params[:mentions])
+  processed_mentions = validate(mentions) if !mentions.empty?
   # uncertain = []
   # content = msg.split # Tokenizes the message
   # content.each do |token|
@@ -164,6 +166,23 @@ post '/testing/tweets/new' do
   #saved = tweet.save
   # puts tweet.to_json
   return {err: false}.to_json
+end
+
+def validate(mentions)
+  processed_mentions = []
+  unprocessed_mentions = []
+  mentions.each do |mention|
+    if !$user_redis.get(mention).nil?
+      user_info = JSON.parse($user_redis.get(mention))
+      valid_mention = user_info['id'].to_s + '-' + mention.to_s
+      processed_mentions << valid_mention
+    else
+      unprocessed_mentions << mention
+    end
+  end
+  ask_user_service = JSON.parse(RestClient.get($user_exists,{usernames: unprocessed_mentions.to_json})) if !unprocessed_mentions.empty
+  processed_mentions = processed_mentions + ask_user_service
+  processed_mentions
 end
 
 delete '/api/v1/tweets/delete/:user_id' do
