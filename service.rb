@@ -223,3 +223,7 @@ post '/api/v1/tweets/bulkinsert' do
   end
   Tweet.collection.insert_many(batch)
 end
+
+get '/status' do
+  "Number of Tweets: #{Tweet.count}".to_json
+end
