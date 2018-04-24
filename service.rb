@@ -171,4 +171,34 @@ delete '/api/v1/tweets/delete/:user_id' do
   $tweet_redis.delete(params[:user_id] + "_feed")
   $tweet_redis_spare.delete(params[:user_id] + "_feed")
   success.to_json
+
+  post '/api/v1/tweets/bulkinsert' do
+  batch = []
+  i = 0
+  tweet_feed = JSON.parse(params["tweets"])
+  tweet_feed.each do |tweet|
+    if tweet["mentions"].nil?
+      mentions = []
+    else
+      mentions = tweet["mentions"]
+    end
+    entry = {
+      contents: tweet["tweet-input"],
+      date_posted: Time.now,
+      user: {
+        username: tweet["username"],
+        id: tweet["id"]
+      },
+      mentions: mentions
+    }
+    batch << entry
+    if i < 50:
+      cache($tweet_redis, "recent", entry.to_json)
+      cache($tweet_redis_spare, "recent", entry.to_json)
+      i++
+    end
+  end
+  Tweet.collection.insert_many(batch)
+end
+
 end
