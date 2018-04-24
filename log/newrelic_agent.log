@@ -59,3 +59,19 @@
 [2018-04-23 04:14:09 +0000 precise64 (4271)] INFO : Installing Redis Instrumentation
 [2018-04-23 04:14:09 +0000 precise64 (4271)] INFO : Finished instrumentation
 [2018-04-23 04:14:09 +0000 precise64 (4271)] INFO : Doing deferred dependency-detection before Rack startup
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Starting the New Relic agent version 5.0.0.342 in "development" environment.
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : To prevent agent startup add a NEW_RELIC_AGENT_ENABLED=false environment variable or modify the "development" section of your newrelic.yml.
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Reading configuration from config/newrelic.yml (/Users/zhengyangzhou/Desktop/Spring 2018/tweet-writer)
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Environment: development
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : No known dispatcher detected.
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Application: My Application (Development)
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing Bunny instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing Mongo instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing Net instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing Sinatra instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing deferred Rack::Builder instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing Rack::Builder middleware instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Installing Redis Instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Finished instrumentation
+[2018-04-23 23:34:37 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Doing deferred dependency-detection before Rack startup
+[2018-04-23 23:34:39 -0400 Zhengyangs-MacBook-Pro-2.local (25133)] INFO : Reporting to: https://rpm.newrelic.com/accounts/1949244/applications/50519398
