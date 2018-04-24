@@ -226,5 +226,5 @@ post '/api/v1/tweets/bulkinsert' do
 end
 
 get '/status' do
-  "Number of Tweets: #{Tweet.count}".to_json
+  "Number of Tweets: #{Tweet.count}"
 end
