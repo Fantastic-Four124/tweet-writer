@@ -183,6 +183,7 @@ def validate(mentions)
       unprocessed_mentions << mention
     end
   end
+  ask_user_service = []
   ask_user_service = JSON.parse(RestClient.post($user_exists,{usernames: unprocessed_mentions.to_json})) if !unprocessed_mentions.empty?
   processed_mentions = processed_mentions + ask_user_service
   processed_mentions
