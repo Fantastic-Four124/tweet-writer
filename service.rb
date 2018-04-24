@@ -147,7 +147,7 @@ post '/api/v1/testing/tweets/new' do
   },
     mentions: mentions
   )
-  # puts tweet.to_json
+  puts tweet.to_json
   cache($tweet_redis, "recent", tweet.to_json)
   cache($tweet_redis_spare, "recent", tweet.to_json)
   cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
@@ -159,7 +159,7 @@ post '/api/v1/testing/tweets/new' do
     end
   end
 #thr = Thread.new{ writer_client.call(tweet.to_json) }
-  writer_client.call(tweet.to_json)
+  $writer_client.call(tweet.to_json)
   #saved = tweet.save
   # puts tweet.to_json
   return {err: false}.to_json
