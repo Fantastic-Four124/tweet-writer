@@ -192,11 +192,11 @@ post '/api/v1/tweets/bulkinsert' do
       mentions: mentions
     }
     batch << entry
-    if i < 50:
-      cache($tweet_redis, "recent", entry.to_json)
-      cache($tweet_redis_spare, "recent", entry.to_json)
-      i++
-    end
+    # if i < 50:
+    #   cache($tweet_redis, "recent", entry.to_json)
+    #   cache($tweet_redis_spare, "recent", entry.to_json)
+    #   i++
+    # end
   end
   Tweet.collection.insert_many(batch)
 end
