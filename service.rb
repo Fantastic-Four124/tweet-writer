@@ -131,6 +131,7 @@ post '/testing/tweets/new' do
   puts params
   username = params[:username]
   user_id = params[:id]
+  mentions = []
   # uncertain = []
   # content = msg.split # Tokenizes the message
   # content.each do |token|
