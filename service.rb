@@ -100,17 +100,17 @@ post '/api/v1/:apitoken/tweets/new' do
     )
     # Redis block
     # puts tweet.to_json
-    cache($tweet_redis, "recent", tweet.as_json)
-    cache($tweet_redis_spare, "recent", tweet.as_json)
-    cache($tweet_redis_3, "recent", tweet.as_json)
-    cache($tweet_redis, user_id.to_s + "_feed", tweet.as_json)
-    cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.as_json)
-    cache($tweet_redis_3, user_id.to_s + "_feed", tweet.as_json)
+    cache($tweet_redis, "recent", tweet.to_json)
+    cache($tweet_redis_spare, "recent", tweet.to_json)
+    cache($tweet_redis_3, "recent", tweet.to_json)
+    cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
+    cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
+    cache($tweet_redis_3, user_id.to_s + "_feed", tweet.to_json)
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-        cache($tweet_redis,follower.to_s + "_timeline", tweet.as_json)
-        cache($tweet_redis_spare,follower.to_s + "_timeline", tweet.as_json)
-        cache($tweet_redis_3,follower.to_s + "_timeline", tweet.as_json)
+        cache($tweet_redis,follower.to_s + "_timeline", tweet.to_json)
+        cache($tweet_redis_spare,follower.to_s + "_timeline", tweet.to_json)
+        cache($tweet_redis_3,follower.to_s + "_timeline", tweet.to_json)
       end
     end
 
@@ -160,15 +160,15 @@ post '/testing/tweets/new' do
     mentions: mentions
   )
   puts tweet.to_json
-  cache($tweet_redis, "recent", tweet.as_json)
-  cache($tweet_redis_spare, "recent", tweet.as_json)
-  cache($tweet_redis, user_id.to_s + "_feed", tweet.as_json)
-  cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.as_json)
+  cache($tweet_redis, "recent", tweet.to_json)
+  cache($tweet_redis_spare, "recent", tweet.to_json)
+  cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
+  cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
   if !$follow_redis.get("#{user_id.to_s} followers").nil?
     JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-      cache($tweet_redis, "#{follower}_timeline", tweet.as_json)
-      cache($tweet_redis_spare, "#{follower}_timeline", tweet.as_json)
-      cache($tweet_redis_3,"#{follower}_timeline", tweet.as_json)
+      cache($tweet_redis, "#{follower}_timeline", tweet.to_json)
+      cache($tweet_redis_spare, "#{follower}_timeline", tweet.to_json)
+      cache($tweet_redis_3,"#{follower}_timeline", tweet.to_json)
     end
   end
 #thr = Thread.new{ writer_client.call(tweet.to_json) }
