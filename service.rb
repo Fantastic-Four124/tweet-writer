@@ -11,13 +11,6 @@ require 'rest-client'
 require_relative 'writer_client.rb'
 require 'newrelic_rpm'
 
-#writer_client = WriterClient.new('writer_queue',ENV["RABBITMQ_BIGWIG_RX_URL"])
-
-# Thread.new do
-#   require_relative 'writer_server.rb'
-# end
-
-
 # DB Setup
 Mongoid.load! "config/mongoid.yml"
 $user_exists = 'https://nanotwitter-userservice.herokuapp.com/api/v1/users/exists'
@@ -53,6 +46,12 @@ helpers do
       redis.rpop(redis_key)
     end
   end
+
+  def add_to_redis_list(name,tweet)
+    cache($tweet_redis, name, tweet.to_json)
+    cache($tweet_redis_spare, name, tweet.to_json)
+    cache($tweet_redis_3, name, tweet.to_json)
+  end
 end
 
 # These are still under construction.
@@ -66,29 +65,12 @@ get '/loaderio-5e6733da8faf19acc30234ffdc8ed34d.txt' do
 end
 #
 post '/api/v1/:apitoken/tweets/new' do
-  puts params
   session = $user_redis.get(params[:apitoken])
   if !session.nil?
-    # byebug
-    puts params
     username = JSON.parse(session)["username"]
     user_id = JSON.parse(session)["id"].to_i
     mentions = JSON.parse(params[:mentions])
     mentions = validate(mentions) if !mentions.empty?
-    #mentions = []
-    # uncertain = []
-    # content = params["tweet-input"].split # Tokenizes the message
-    # content.each do |token|
-    #   if /([@.])\w+/.match(token)
-    #     term = token[1..-1]
-    #     if !$user_redis.get(term).nil?
-    #       mentions << {term => $user_redis.get(term)}
-    #     else
-    #       uncertain << term
-    #     end
-    #   end
-    # end
-    # mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com/api/v1/users/exists', {usernames: uncertain.to_json})
     result = Hash.new
     tweet = Tweet.new(
       contents: params["tweet-input"],
@@ -98,27 +80,15 @@ post '/api/v1/:apitoken/tweets/new' do
     },
       mentions: mentions
     )
-    # Redis block
-    # puts tweet.to_json
-    cache($tweet_redis, "recent", tweet.to_json)
-    cache($tweet_redis_spare, "recent", tweet.to_json)
-    cache($tweet_redis_3, "recent", tweet.to_json)
-    cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
-    cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
-    cache($tweet_redis_3, user_id.to_s + "_feed", tweet.to_json)
+    add_to_redis_list("recent",tweet)
+    add_to_redis_list(user_id.to_s + "_feed",tweet)
     if !$follow_redis.get("#{user_id.to_s} followers").nil?
       JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-        cache($tweet_redis,follower.to_s + "_timeline", tweet.to_json)
-        cache($tweet_redis_spare,follower.to_s + "_timeline", tweet.to_json)
-        cache($tweet_redis_3,follower.to_s + "_timeline", tweet.to_json)
+        add_to_redis_list(follower.to_s + "_timeline",tweet)
       end
     end
 
-    # byebug
-    #thr = Thread.new{ writer_client.call(tweet.to_json) }
     $writer_client.call(tweet.to_json)
-    #saved = tweet.save
-    # puts tweet.to_json
     return {err: false}.to_json
   end
   {err: true}.to_json
@@ -133,23 +103,9 @@ delete '/api/v1/tweets/delete' do
 end
 
 post '/testing/tweets/new' do
-  puts params
   username = params[:username]
   user_id = params[:id]
   mentions = []
-  # uncertain = []
-  # content = msg.split # Tokenizes the message
-  # content.each do |token|
-  #   if /([@.])\w+/.match(token)
-  #     term = token[1..-1]
-  #     if !$user_redis.get(term).nil?
-  #       mentions << {term => $user_redis.get(term)}
-  #     else
-  #       uncertain << term
-  #     end
-  #   end
-  # end
-  # mentions = mentions + JSON.parse(RestClient.get 'https://nanotwitter-userservice.herokuapp.com//api/v1/users/exists', {usernames: uncertain.to_json})
   result = Hash.new
   tweet = Tweet.new(
     contents: params["tweet-input"],
@@ -159,22 +115,14 @@ post '/testing/tweets/new' do
   },
     mentions: mentions
   )
-  puts tweet.to_json
-  cache($tweet_redis, "recent", tweet.to_json)
-  cache($tweet_redis_spare, "recent", tweet.to_json)
-  cache($tweet_redis, user_id.to_s + "_feed", tweet.to_json)
-  cache($tweet_redis_spare, user_id.to_s + "_feed", tweet.to_json)
+  add_to_redis_list("recent",tweet)
+  add_to_redis_list(user_id.to_s + "_feed",tweet)
   if !$follow_redis.get("#{user_id.to_s} followers").nil?
     JSON.parse($follow_redis.get("#{user_id.to_s} followers")).keys.each do |follower|
-      cache($tweet_redis, "#{follower}_timeline", tweet.to_json)
-      cache($tweet_redis_spare, "#{follower}_timeline", tweet.to_json)
-      cache($tweet_redis_3,"#{follower}_timeline", tweet.to_json)
+      add_to_redis_list(follower.to_s + "_timeline",tweet)
     end
   end
-#thr = Thread.new{ writer_client.call(tweet.to_json) }
   $writer_client.call(tweet.to_json)
-  #saved = tweet.save
-  # puts tweet.to_json
   return {err: false}.to_json
 end
 
@@ -223,11 +171,6 @@ post '/api/v1/tweets/bulkinsert' do
       mentions: mentions
     }
     batch << entry
-    # if i < 50:
-    #   cache($tweet_redis, "recent", entry.to_json)
-    #   cache($tweet_redis_spare, "recent", entry.to_json)
-    #   i++
-    # end
   end
   Tweet.collection.insert_many(batch)
 end
