@@ -63,7 +63,8 @@ end
 get '/loaderio-5e6733da8faf19acc30234ffdc8ed34d.txt' do
   send_file 'loaderio-5e6733da8faf19acc30234ffdc8ed34d.txt'
 end
-#
+
+# Can post a new tweet if the user is logged in.
 post '/api/v1/:apitoken/tweets/new' do
   session = $user_redis.get(params[:apitoken])
   if !session.nil?
